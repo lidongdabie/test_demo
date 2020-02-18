@@ -1,0 +1,33 @@
+package com.ymm;
+
+import com.asserts.YmmAssert;
+import com.auth.Authorization;
+import com.datadriver.AutoDataDriverBase;
+import getauth.Auth;
+import org.apache.http.ParseException;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
+
+import java.io.IOException;
+
+/**
+* Created by Administrator on 2016/7/12.
+*/
+public class VelocityTestcase extends AutoDataDriverBase {
+
+  @BeforeClass
+  //获取auth凭据
+  public void getauth() throws IOException {
+    Auth auth=new Auth();
+    Authorization.auth=auth.getauth("11122233301").replaceAll("\r|\n", "");
+}
+
+   #foreach ($param in ${TestCaseGroup})
+   @Test
+   public void ${param[0]}() throws ParseException,IOException{
+   VelocityYmmAssert velocityYmmAssert =new VelocityYmmAssert();
+   velocityYmmAssert.assert${param[0]}();
+   }
+   #end
+
+}

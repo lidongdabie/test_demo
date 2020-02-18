@@ -1,0 +1,29 @@
+package com.asserts;
+
+import com.bean.addroute;
+import com.bean.getemptytrucklist;
+import com.bean.newcargo;
+import com.google.gson.Gson;
+import com.pages.YmmPage;
+
+import java.io.IOException;
+import java.util.Map;
+import com.pages.VelocityYmmPage;
+
+import static org.testng.AssertJUnit.assertTrue;
+
+/**
+* Created by Velocity on ${CreateTime}.
+*/
+public class VelocityYmmAssert {
+
+VelocityYmmPage VelocityYmmPage = new VelocityYmmPage();
+#foreach ($param in ${TestCaseGroup})
+
+public void assert${param[0]}() throws IOException {
+String response=VelocityYmmPage.${param[0]}();
+System.out.println(response);
+assertTrue("返回码错误，实际为返回的值是"+ response, response.contains("\"result\":1"));
+}
+#end
+}

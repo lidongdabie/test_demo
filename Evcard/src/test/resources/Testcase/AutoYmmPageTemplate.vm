@@ -1,0 +1,28 @@
+package com.pages;
+
+import com.auth.Authorization;
+import com.auth.YmmAuthority;
+import com.http.HttpClient;
+
+import java.io.IOException;
+import java.util.Map;
+
+/**
+* Created by Velocity on ${CreateTime}.
+*/
+public class Evcard_Mas_Page extends EvcardAuthority{
+
+public String baseURL = null;
+
+public Evcard_Mas_Page(){
+baseURL = super.getBaseUrl();
+}
+
+#foreach ($param in ${TestCaseGroup})
+     public String ${param[0]}() throws IOException{
+     String param=String.format("");
+     String requestResult = HttpClient.toString(HttpClient.postJson(this.baseURL+"/${param[1]}",param));
+     return  requestResult;
+  }
+#end
+  }

@@ -1,0 +1,35 @@
+package com.ymm;
+
+import com.asserts.YmmAssert;
+import com.auth.Authorization;
+import com.datadriver.AutoDataDriverBase;
+import getauth.Auth;
+import org.apache.http.ParseException;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
+
+import java.io.IOException;
+
+/**
+* Created by Administrator on 2016/7/12.
+*/
+public class Evcard_Mas_testcase extends AutoDataDriverBase {
+
+     private String Token="";
+
+     @BeforeClass
+     public void gettoken() throws IOException {
+     Evcard_Mas_Assert evcard_mas_assert =  new Evcard_Mas_Assert();
+     Token=evcard_mas_assert.assertverify();
+     System.out.println(Token);
+     }
+
+   #foreach ($param in ${TestCaseGroup})
+   @Test
+   public void ${param[0]}() throws ParseException,IOException{
+   Evcard_Mas_Assert velocityYmmAssert =new Evcard_Mas_Assert();
+   Evcard_Mas_Assert.assert${param[0]}();
+   }
+   #end
+
+}

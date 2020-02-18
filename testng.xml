@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suite name="All Suite" thread-count="1" verbose="1">
+	<suite-files>
+		<!--<suite-file name="biz" path="./biz/biz.xml" />-->
+		<suite-file name="Evcard Suite" path="./Evcard/Evcard.xml" />
+	</suite-files>
+	<!--<test name="biz">-->
+	<!--<packages>-->
+	<!--<package name="com.demo"></package>-->
+	<!--</packages>-->
+	<!--</test>-->
+	<!--<test name="ymm">-->
+	<!--<packages>-->
+	<!--<package name="com.ymm"></package>-->
+	<!--</packages>-->
+	<!--</test>-->
+	<!--<test name="yunma">-->
+	<!--<packages>-->
+	<!--<package name="com.yunma"></package>-->
+	<!--</packages>-->
+	<!--</test>-->
+</suite>

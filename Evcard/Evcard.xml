@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suite name="Evcard Suite" thread-count="1" verbose="1" allow-return-values="true">
+    <listeners>
+        <listener class-name="framework.TestngListener"></listener>
+    </listeners>
+    <test name="Evcard">
+        <packages>
+            <package name="Evcard_Mas"></package>
+        </packages>
+    </test>
+</suite>

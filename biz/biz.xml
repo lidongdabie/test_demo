@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suite name="Biz Suite" thread-count="1" verbose="1">
+    <test name="biz">
+        <packages>
+            <package name="com.demo"></package>
+        </packages>
+    </test>
+</suite>
