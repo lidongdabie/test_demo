@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
+<!--??????-->
+  <localRepository>/Users/jinwei/Desktop/repository</localRepository>
+  <pluginGroups>
+  </pluginGroups>
+  <proxies>  
+  </proxies>
+<servers>
+      <server>
+        <id>cheneystudio</id>
+        <username>jinwei</username>
+        <password>jinwei123</password>
+      </server>
+    </servers>
+  <profiles>
+   
+	<profile>
+        <id>nexus</id>
+        <repositories>
+            <repository>
+                <id>central</id>
+                <name>MyRepository</name>
+                <url>http://repo1.maven.org/maven2</url>
+                <releases>
+                     <enabled>true</enabled>     
+                </releases>
+                <snapshots>
+                     <enabled>true</enabled>
+                </snapshots>
+            </repository>
+			<repository>
+                <id>central2</id>
+                <name>MyRepository</name>
+                <url>http://192.168.1.102:8081/nexus/content/groups/public</url>
+                <releases>
+                     <enabled>true</enabled>     
+                </releases>
+                <snapshots>
+                     <enabled>true</enabled>
+                </snapshots>
+            </repository>
+			<repository>
+                <id>central4</id>
+                <name>MyRepository</name>
+                <url>http://maven.aliyun.com/nexus/content/groups/public</url>
+                <releases>
+                     <enabled>true</enabled>     
+                </releases>
+                <snapshots>
+                     <enabled>true</enabled>
+                </snapshots>
+            </repository>
+        </repositories>
+		 
+    </profile>
+  </profiles>
+
+  <!-- ?????? -->
+ <activeProfiles>
+        <activeProfile>nexus</activeProfile>
+</activeProfiles>
+</settings>
