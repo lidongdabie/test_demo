@@ -4,11 +4,15 @@ import com.builder.dispatchData;
 import com.builder.newTaskQueryData;
 import com.builder.queryMyTaskData;
 import com.builder.queryMyTaskResultData;
+import com.csvreader.CsvWriter;
 import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.Predicate;
 import com.pages.Evcard_Ids_Page;
-import com.pages.Evwork_Ids_Page;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static org.testng.AssertJUnit.assertTrue;
@@ -19,139 +23,70 @@ import static org.testng.AssertJUnit.assertTrue;
 public class Evcard_Ids_Assert {
 
     Evcard_Ids_Page evcard_mas_page = new Evcard_Ids_Page();
-    Evwork_Ids_Page evwork_Ids_Page = new Evwork_Ids_Page();
+    List<HashMap> authors = null;
+
+    public void asserttest(String JSESSIONID,String acw_tc,String accessToken,String csvpath,String startdate,String enddate) throws Exception {
+//        String result = evcard_mas_page.test(JSESSIONID,acw_tc,accessToken,csvpath);
+//        //List<String> authors = JsonPath.read(result, "$.data.content[?(@.ztStr == '违法未处理')].xh");
+//        authors = JsonPath.read(result, "$.data.content[*].xh");
+        authors = new ArrayList<HashMap>();
 
 
-    public String assertverifySSOlogin() throws Exception {
-        String token = evcard_mas_page.SSOlogin();
-        return token;
+        authors = evcard_mas_page.test3(JSESSIONID,acw_tc,accessToken,csvpath);
+
+
+        String filePath = csvpath;
+        System.out.println(filePath);
+        CsvWriter csvWriter = new CsvWriter(filePath,',', Charset.forName("UTF-8"));
+        // 写表头
+        //String[] headers = {"违法行为","罚款金额","记分值","号牌号码","违法地点","违法时间","是否处理","缴款状态","号牌种类"};
+        String[] headers = {"号牌号码","罚款金额","记分值","违法时间","违法行为","违法地点","是否处理","缴款状态","号牌种类"};
+
+        csvWriter.writeRecord(headers);
+        for (int i = 0;i<authors.size();i++){
+            System.out.println("开始执行:"+authors.get(i)+"---第"+(i+1)+"条数据---");
+            List<HashMap> li = asserttest2(authors.get(i),JSESSIONID,acw_tc,accessToken,startdate,enddate);
+            test3(li,csvWriter);
+            System.out.println("写入完毕");
+        }
+        csvWriter.close();
+        System.out.println("--------CSV文件已经写入--------");
+        csvWriter.close();
     }
 
-    public String assertEditTask(String token) throws Exception {
-        String result = evcard_mas_page.addEditTask(token);
-        assertTrue("返回码错误，实际为返回的值是" + result, result.contains("\"code\":\"0\",\"message\":\"编辑任务信息成功\""));
-        return result;
+    public List<HashMap> asserttest2(HashMap xh,String a,String b,String d,String startdate,String enddate) throws IOException {
+        List<String> result = evcard_mas_page.test2(xh,a,b,d,startdate,enddate);
+        List<HashMap> authorslist = new ArrayList<>();
+        //List<String> authors = JsonPath.read(result, "$.data.content[?(@.clbjStr == '未处理')]['wfms','hphm','wfdz','wfsj','hpzlStr','clbjStr','jkbjStr']");
+       for(int i =0 ;i<result.size();i++){
+           List<HashMap> authors = JsonPath.read(result.get(i), "$.data.content[*]['wfms','fkje','wfjfs','hphm','wfdz','wfsj','clbjStr','jkbjStr','hpzlStr']");
+           authorslist.addAll(authors);
+       }
+        return authorslist;
     }
 
-    public String assertAddNewTask(newTaskQueryData addnewTask, String token) throws IOException {
-        String result = evcard_mas_page.addNewTask(addnewTask, token);
-        assertTrue("返回码错误，实际为返回的值是" + result, result.contains("\"success\":true"));
-        String msg = result.split(",")[0].split(":")[1].substring(3, 19);
-        return msg;
-    }
+    public void test3(List<HashMap> authors,CsvWriter csvWriter){
+        //String filePath = "/Users/jinwei/Downloads/IDS_APIAutomation_OLD/Evcard/test.csv";
 
-    public String assertCreateNewTask() throws IOException {
-        String result = evcard_mas_page.createNewTask();
-        assertTrue("返回码错误，实际为返回的值是" + result, result.contains("\"code\":\"0\""));
-        String msg = JsonPath.read(result, "$.message");
-        return msg;
-    }
+        try {
+            // 创建CSV写对象
+            //CsvWriter csvWriter = new CsvWriter(filePath,',', Charset.forName("UTF-8"));
+            //CsvWriter csvWriter = new CsvWriter(filePath);
 
-    public queryMyTaskResultData.DataBean.PageBean.ListBean assertQueryMyTask(queryMyTaskData queryMyTaskData, String token) throws IOException {
-        String result = evcard_mas_page.idsQueryMyTask(queryMyTaskData, token);
-        assertTrue("返回码错误，实际为返回的值是" + result, result.contains("\"code\":\"0\""));
-        int id = JsonPath.read(result, "$.data.list[0].id");
-        String procInstId = JsonPath.read(result, "$.data.list[0].procInstId");
-        String activitiProcinstId = JsonPath.read(result, "$.data.list[0].activitiProcinstId");
-        queryMyTaskResultData.DataBean.PageBean.ListBean ListBean = queryMyTaskResultData.DataBean.PageBean.ListBean.builder()
-                .id(id)
-                .procInstId(procInstId).activitiProcinstId(activitiProcinstId).build();
-        return ListBean;
-    }
 
-    public String assertidsQueryWorkOrderTask(String taskSeq, String token) throws IOException {
-        String result = evcard_mas_page.idsQueryWorkOrderTask(taskSeq, token);
-        assertTrue("返回码错误，实际为返回的值是" + result, result.contains("\"code\":\"0\""));
-        String workOrderSeq = JsonPath.read(result, "$.data.list[0].workOrderSeq");
-        return workOrderSeq;
-    }
+            //String[] content = {"12365","张山","34"};
+            //csvWriter.writeRecord(headers);
+            for (int i = 0; i <authors.size(); i++) {
+                //String[] csvContent = { i + "000000", "StemQ", "1" + i };
+                String[] csvContent = {(String) authors.get(i).get("hphm"),(String) authors.get(i).get("fkje"),(String) authors.get(i).get("wfjfs"),(String) authors.get(i).get("wfsj"),(String) authors.get(i).get("wfms"),(String) authors.get(i).get("wfdz"),(String) authors.get(i).get("clbjStr"),(String) authors.get(i).get("jkbjStr"),(String) authors.get(i).get("hpzlStr")};
+                csvWriter.writeRecord(csvContent);
+            }
+//            csvWriter.close();
+//            System.out.println("--------CSV文件已经写入--------");
+//            csvWriter.close();
 
-    public void assertidsAssignTaskToErea(dispatchData dispatchdata, String token) throws IOException {
-        String result = evcard_mas_page.idsAssignTaskToErea(dispatchdata, token);
-        assertTrue("返回码错误，实际为返回的值是" + result, result.contains("\"code\":\"0\",\"message\":\"指派成功\""));
-    }
-
-    public void assertIdsRejectTaskToErea(dispatchData dispatchdata, String token) throws IOException {
-        String result = evcard_mas_page.idsRejectTaskToErea(dispatchdata, token);
-        assertTrue("返回码错误，实际为返回的值是" + result, result.contains("\"code\":\"0\",\"message\":\"上报成功\""));
-    }
-
-    public void assertChangeRole(String role, String token) throws IOException {
-        String result = evcard_mas_page.idsChangeRole(role, token);
-        assertTrue("返回码错误，实际为返回的值是" + result, result.contains("\"code\":\"0\""));
-    }
-
-    public void assertIdsRejectTaskToIPQC(dispatchData dispatchdata, String token) throws IOException {
-        String result = evcard_mas_page.idsRejectTaskToIPQC(dispatchdata, token);
-        assertTrue("返回码错误，实际为返回的值是" + result, result.contains("\"code\":\"0\",\"message\":\"指派成功\""));
-    }
-
-    public void assertidsCompleteTask(dispatchData dispatchdata, String token) throws IOException {
-        String result = evcard_mas_page.idsCompleteTask(dispatchdata, token);
-        assertTrue("返回码错误，实际为返回的值是" + result, result.contains("\"code\":\"0\""));
-    }
-
-    public String assertEvwork_Login(String username) throws IOException {
-        String result = evwork_Ids_Page.Evwork_Login(username);
-        assertTrue("返回码错误，实际为返回的值是" + result, result.contains("\"code\":\"0\""));
-        String AppToken = JsonPath.read(result, "$.data.token");
-        return AppToken;
-    }
-
-    public Integer assertgetWorkOrderList(String dispatchOrderSeq, String AppToken) throws IOException {
-        String result = evwork_Ids_Page.getWorkOrderList(AppToken);
-        assertTrue("返回码错误，实际为返回的值是" + result, result.contains("\"code\":\"0\""));
-        int problemTypeId = 12;
-        String jsonpath = "$.data[?(@.problemTypeId==" + problemTypeId + "&&@.dispatchOrderSeq=='" + dispatchOrderSeq + "')].dispatchOrderId";
-        List<Integer> dispatchOrderIdlist = JsonPath.read(result, jsonpath);
-        return dispatchOrderIdlist.get(0);
-    }
-
-    public int assertEvwork_getOrderDetail(int dispatchOrderId, String AppToken) throws IOException {
-        String result = evwork_Ids_Page.Evwork_getOrderDetail(dispatchOrderId, AppToken);
-        assertTrue("返回码错误，实际为返回的值是" + result, result.contains("\"code\":\"0\""));
-        int dispatchTaskId = JsonPath.read(result, "$.data.dispatchTaskId");
-        return dispatchTaskId;
-    }
-
-    public void assertEvwork_DepartOrder(int dispatchOrderId, String AppToken) throws IOException {
-        String result = evwork_Ids_Page.Evwork_DepartOrder(dispatchOrderId, AppToken);
-        assertTrue("返回码错误，实际为返回的值是" + result, result.contains("\"code\":\"0\""));
-    }
-
-    public void assertEvwork_StartTask(int dispatchTaskId, int dispatchOrderId, String AppToken) throws IOException {
-        String result = evwork_Ids_Page.Evwork_StartTask(dispatchTaskId, dispatchOrderId, AppToken);
-        assertTrue("返回码错误，实际为返回的值是" + result, result.contains("\"code\":\"0\""));
-    }
-
-    public void assertEvcard_CompleteTask(int dispatchTaskId, String AppToken) throws IOException {
-        String result = evwork_Ids_Page.Evcard_CompleteTask(dispatchTaskId, AppToken);
-        assertTrue("返回码错误，实际为返回的值是" + result, result.contains("\"code\":\"0\""));
-    }
-
-    public void assertEvwork_UploadTaskInfo(int dispatchTaskId, String AppToken) throws IOException {
-        String result = evwork_Ids_Page.evwork_UploadTaskInfo(dispatchTaskId, AppToken);
-        assertTrue("返回码错误，实际为返回的值是" + result, result.contains("\"code\":\"0\""));
-        System.out.println(result);
-    }
-
-    public void assertEvwork_UploadTaskInfo_old(int dispatchTaskId, String AppToken) throws IOException {
-        String result = evcard_mas_page.evwork_UploadTaskInfo(dispatchTaskId, AppToken);
-        assertTrue("返回码错误，实际为返回的值是" + result, result.contains("\"code\":\"0\""));
-    }
-
-    public void assertCallcenterProcessesTask(dispatchData dispatchdata, String token) throws IOException {
-        String result = evcard_mas_page.callcenterProcessesTask(dispatchdata, token);
-        assertTrue("返回码错误，实际为返回的值是" + result, result.contains("\"success\":true"));
-    }
-
-    public void assertIdsAssignToCustomServant(dispatchData dispatchdata, String token) throws IOException {
-        String result = evcard_mas_page.idsAssignToCustomServant(dispatchdata, token);
-        assertTrue("返回码错误，实际为返回的值是" + result, result.contains("\"code\":\"0\""));
-    }
-
-    public void assertIdsRiskControltoConfirm(dispatchData dispatchdata, String token) throws IOException {
-        String result = evcard_mas_page.idsRiskControltoConfirm(dispatchdata, token);
-        assertTrue("返回码错误，实际为返回的值是" + result, result.contains("\"code\":\"0\""));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
