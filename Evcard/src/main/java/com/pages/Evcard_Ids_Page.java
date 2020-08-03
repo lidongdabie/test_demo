@@ -15,7 +15,7 @@ import java.util.List;
 public class Evcard_Ids_Page{
 
     public String test(String JSESSIONID,String acw_tc,String accessToken,String csvpath) throws Exception {
-        String s = "https://nkg.122.gov.cn/user/m/userinfo/vehs";
+        String s = "https://gd.122.gov.cn/user/m/tsc/veh/vehlist";
         String param = "page=1&size=5080";
         String result = HttpClient.toString(HttpClient.postform(s,param,JSESSIONID,acw_tc,accessToken));
         return result;
@@ -43,22 +43,16 @@ public class Evcard_Ids_Page{
         return authors;
     }
 
-    public List<String> test2(HashMap xh,String a,String b,String d,String startdate,String enddate) throws IOException {
-        String s = "https://hi.122.gov.cn/user/m/uservio/suriquery";
+    public List<String> test2(String xh,String a,String b,String d) throws IOException {
+        String s = "https://gd.122.gov.cn/user/m/tsc/vio/querySurveilVeh";
         String result = "";
-        String param = "";
+        String param = String.format("xh=%s&size=1000",xh);
         List<String> resultlist = new ArrayList();
         int i = 1;
         do{
             try {
                 if(i<4){
                     for(int j=1;j<10;j++){
-                        if(xh.get("hpzlStr").equals("小型新能源汽车")){
-                             param = String.format("startDate=%s&endDate=%s&hpzl=52&hphm=%s&type=0&page=%s",startdate,enddate,xh.get("hphm"),j);
-                        }else {
-                             param = String.format("startDate=20170101&endDate=%s&hpzl=02&hphm=%s&type=0&page=%s",startdate,enddate,xh.get("hphm"),j);
-
-                        }
                         result = HttpClient.toString(HttpClient.postform(s,param,a,b,d));
                         List<HashMap> authors = JsonPath.read(result, "$.data.content[*]['wfms','fkje','wfjfs','hphm','wfdz','wfsj','clbjStr','jkbjStr','hpzlStr']");
                        if(authors.size()!=0){
@@ -75,6 +69,11 @@ public class Evcard_Ids_Page{
         } while (result.equals(""));
         return resultlist;
     }
+
+
+
+
+
 
 //    public void test3(String url) throws IOException {
 //        String  result = HttpClient.toString(HttpClient.get(url));

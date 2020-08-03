@@ -23,16 +23,16 @@ import static org.testng.AssertJUnit.assertTrue;
 public class Evcard_Ids_Assert {
 
     Evcard_Ids_Page evcard_mas_page = new Evcard_Ids_Page();
-    List<HashMap> authors = null;
+    List<String> authors = null;
 
-    public void asserttest(String JSESSIONID,String acw_tc,String accessToken,String csvpath,String startdate,String enddate) throws Exception {
-//        String result = evcard_mas_page.test(JSESSIONID,acw_tc,accessToken,csvpath);
-//        //List<String> authors = JsonPath.read(result, "$.data.content[?(@.ztStr == '违法未处理')].xh");
-//        authors = JsonPath.read(result, "$.data.content[*].xh");
-        authors = new ArrayList<HashMap>();
+    public void asserttest(String JSESSIONID,String acw_tc,String accessToken,String csvpath) throws Exception {
+        String result = evcard_mas_page.test(JSESSIONID,acw_tc,accessToken,csvpath);
+        //List<String> authors = JsonPath.read(result, "$.data.content[?(@.ztStr == '违法未处理')].xh");
+        authors = JsonPath.read(result, "$.data.content[*].xh");
+//        authors = new ArrayList<HashMap>();
 
 
-        authors = evcard_mas_page.test3(JSESSIONID,acw_tc,accessToken,csvpath);
+//        authors = evcard_mas_page.test3(JSESSIONID,acw_tc,accessToken,csvpath);
 
 
         String filePath = csvpath;
@@ -45,7 +45,7 @@ public class Evcard_Ids_Assert {
         csvWriter.writeRecord(headers);
         for (int i = 0;i<authors.size();i++){
             System.out.println("开始执行:"+authors.get(i)+"---第"+(i+1)+"条数据---");
-            List<HashMap> li = asserttest2(authors.get(i),JSESSIONID,acw_tc,accessToken,startdate,enddate);
+            List<HashMap> li = asserttest2(authors.get(i),JSESSIONID,acw_tc,accessToken);
             test3(li,csvWriter);
             System.out.println("写入完毕");
         }
@@ -54,8 +54,8 @@ public class Evcard_Ids_Assert {
         csvWriter.close();
     }
 
-    public List<HashMap> asserttest2(HashMap xh,String a,String b,String d,String startdate,String enddate) throws IOException {
-        List<String> result = evcard_mas_page.test2(xh,a,b,d,startdate,enddate);
+    public List<HashMap> asserttest2(String xh,String a,String b,String d) throws IOException {
+        List<String> result = evcard_mas_page.test2(xh,a,b,d);
         List<HashMap> authorslist = new ArrayList<>();
         //List<String> authors = JsonPath.read(result, "$.data.content[?(@.clbjStr == '未处理')]['wfms','hphm','wfdz','wfsj','hpzlStr','clbjStr','jkbjStr']");
        for(int i =0 ;i<result.size();i++){
