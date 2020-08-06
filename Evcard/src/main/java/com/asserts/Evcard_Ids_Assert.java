@@ -54,7 +54,7 @@ public class Evcard_Ids_Assert {
         csvWriter.close();
     }
 
-    public List<HashMap> asserttest2(HashMap xh,String a,String b,String d,String startdate,String enddate) throws IOException {
+    public List<HashMap> asserttest2(HashMap xh,String a,String b,String d,String startdate,String enddate) throws Exception {
         List<String> result = evcard_mas_page.test2(xh,a,b,d,startdate,enddate);
         List<HashMap> authorslist = new ArrayList<>();
         //List<String> authors = JsonPath.read(result, "$.data.content[?(@.clbjStr == '未处理')]['wfms','hphm','wfdz','wfsj','hpzlStr','clbjStr','jkbjStr']");
