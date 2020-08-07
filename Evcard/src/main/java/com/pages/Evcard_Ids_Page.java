@@ -16,22 +16,22 @@ import java.util.concurrent.Executors;
 public class Evcard_Ids_Page{
 
     public String test(String JSESSIONID,String acw_tc,String accessToken,String csvpath) throws Exception {
-        String s = "https://ah.122.gov.cn/user/m/userinfo/vehs";
+        String s = "https://wux.122.gov.cn/user/m/userinfo/vehs";
         String param = "page=1&size=5080";
         String result = HttpClient.toString(HttpClient.postform(s,param,JSESSIONID,acw_tc,accessToken));
         return result;
     }
 
     public List<HashMap> test3(String JSESSIONID,String acw_tc,String accessToken,String csvpath) throws Exception {
-        String s = "https://gd.122.gov.cn/user/m/userinfo/vehs";
-        String s2 = "https://gd.122.gov.cn/user/m/tsc/veh/vehlist";
+        String s = "https://wux.122.gov.cn/user/m/userinfo/vehs";
+        //String s2 = "https://hb.122.gov.cn/user/m/tsc/veh/vehlist";
         String param = "page=1&size=100000";
         ExecutorService executor = Executors.newFixedThreadPool(10);
         HashMap map = new HashMap();
 
         List<HashMap> authors = new ArrayList<>();
         String result = HttpClient.toString(HttpClient.postform(s,param,JSESSIONID,acw_tc,accessToken));
-        String result3 = HttpClient.toString(HttpClient.postform(s2,param,JSESSIONID,acw_tc,accessToken));
+        //String result3 = HttpClient.toString(HttpClient.postform(s2,param,JSESSIONID,acw_tc,accessToken));
         Integer j = JsonPath.read(result, "$.data.totalPages");
         List<HashMap> author_10 = JsonPath.read(result, "$.data.content[*]['hphm','hpzlStr']");
         System.out.println("查询非运营车牌数据第1页");
@@ -60,15 +60,16 @@ public class Evcard_Ids_Page{
             }
         }
 
-        List<HashMap> author_3=JsonPath.read(result3, "$.data.content[*]['xh','hphm','hpzlStr']");
-        authors.addAll(author_3);
+        System.out.println("查询运营车辆");
+       // List<HashMap> author_3=JsonPath.read(result3, "$.data.content[*]['xh','hphm','hpzlStr']");
+        //authors.addAll(author_3);
         System.out.println("查询完毕,一共"+authors.size()+"辆车");
         return authors;
     }
 
     public List<String> test2(HashMap xh,String a,String b,String d,String startdate,String enddate) throws Exception {
-        String s = "https://gd.122.gov.cn/user/m/uservio/suriquery";
-        String s2 = "https://gd.122.gov.cn/user/m/tsc/vio/querySurveilVeh";
+        String s = "https://wux.122.gov.cn/user/m/uservio/suriquery";
+        String s2 = "https://wux.122.gov.cn/user/m/tsc/vio/querySurveilVeh";
         final String[] result = {""};
         final String[] param = {""};
         List<String> resultlist = new ArrayList();
@@ -92,6 +93,7 @@ public class Evcard_Ids_Page{
                                 }
                             }
                         };
+                        Thread.sleep(3000);
                     }else {
                        String param2 = String.format("xh=%s&size=10",xh.get("xh"));
                         result[0] = HttpClient.toString(HttpClient.postform(s2, param2,a,b,d));
@@ -101,6 +103,7 @@ public class Evcard_Ids_Page{
                                 resultlist.add(result[0]);
                             }
                         }
+                        Thread.sleep(3000);
                     }
                     }
             }

@@ -457,10 +457,10 @@ public class HttpClient {
 		httpPost.setEntity(se);
 		httpPost.addHeader(HTTP.USER_AGENT,"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.132 Safari/537.36");
 		//httpPost.addHeader("Accept","application/json");
-		addCookie("JSESSIONID-L",a,".gd.122.gov.cn","/");
-		//addCookie("TS01cda7f7",b,".nkg.122.gov.cn","/");
+		addCookie("JSESSIONID-L",a,".wux.122.gov.cn","/");
+		addCookie("acw_tc",b,".wux.122.gov.cn","/");
 		//addCookie("__jsluid_s",c,".sh.122.gov.cn","/");
-		addCookie("accessToken",d,".gd.122.gov.cn","/");
+		addCookie("accessToken",d,".wux.122.gov.cn","/");
 		context.setCookieStore(cookieStore);
 		CloseableHttpResponse response = httpClient.execute(httpPost, context);
 		return response;
