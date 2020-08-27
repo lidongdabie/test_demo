@@ -3,11 +3,14 @@ package com.pages;
 import com.http.HttpClient;
 import com.jayway.jsonpath.JsonPath;
 import lombok.SneakyThrows;
+import org.testng.Assert;
+import org.testng.internal.thread.ThreadTimeoutException;
 
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 
 /**
@@ -16,22 +19,28 @@ import java.util.concurrent.Executors;
 public class Evcard_Ids_Page{
 
     public String test(String JSESSIONID,String acw_tc,String accessToken,String csvpath) throws Exception {
-        String s = "https://wux.122.gov.cn/user/m/userinfo/vehs";
+        String s = "https://hn.122.gov.cn/user/m/userinfo/vehs";
         String param = "page=1&size=5080";
         String result = HttpClient.toString(HttpClient.postform(s,param,JSESSIONID,acw_tc,accessToken));
         return result;
     }
 
+    public String test5(String hphm,String hpzl,String xh,String cjjg,String JSESSIONID,String acw_tc,String accessToken) throws Exception {
+        String s = "https://zj.122.gov.cn/user/m/tsc/vio/querySurvielDetail";
+        String param = String.format("hphm=%s&hpzl=%s&xh=%s&cjjg=%s",hphm,hpzl,xh,cjjg);
+        String result = HttpClient.toString(HttpClient.postform(s,param,JSESSIONID,acw_tc,accessToken));
+        return result;
+    }
+
     public List<HashMap> test3(String JSESSIONID,String acw_tc,String accessToken,String csvpath) throws Exception {
-        String s = "https://wux.122.gov.cn/user/m/userinfo/vehs";
-        //String s2 = "https://hb.122.gov.cn/user/m/tsc/veh/vehlist";
+        String s = "https://zj.122.gov.cn/user/m/userinfo/vehs";
+        String s2 = "https://zj.122.gov.cn/user/m/tsc/veh/vehlist";
         String param = "page=1&size=100000";
         ExecutorService executor = Executors.newFixedThreadPool(10);
-        HashMap map = new HashMap();
 
         List<HashMap> authors = new ArrayList<>();
         String result = HttpClient.toString(HttpClient.postform(s,param,JSESSIONID,acw_tc,accessToken));
-        //String result3 = HttpClient.toString(HttpClient.postform(s2,param,JSESSIONID,acw_tc,accessToken));
+        String result3 = HttpClient.toString(HttpClient.postform(s2,param,JSESSIONID,acw_tc,accessToken));
         Integer j = JsonPath.read(result, "$.data.totalPages");
         List<HashMap> author_10 = JsonPath.read(result, "$.data.content[*]['hphm','hpzlStr']");
         System.out.println("查询非运营车牌数据第1页");
@@ -61,15 +70,16 @@ public class Evcard_Ids_Page{
         }
 
         System.out.println("查询运营车辆");
-       // List<HashMap> author_3=JsonPath.read(result3, "$.data.content[*]['xh','hphm','hpzlStr']");
-        //authors.addAll(author_3);
+        List<HashMap> author_3=JsonPath.read(result3, "$.data.content[*]['xh','hphm','hpzlStr']");
+        authors.addAll(author_3);
         System.out.println("查询完毕,一共"+authors.size()+"辆车");
         return authors;
     }
 
     public List<String> test2(HashMap xh,String a,String b,String d,String startdate,String enddate) throws Exception {
-        String s = "https://wux.122.gov.cn/user/m/uservio/suriquery";
-        String s2 = "https://wux.122.gov.cn/user/m/tsc/vio/querySurveilVeh";
+        String s = "https://zj.122.gov.cn/user/m/uservio/suriquery";
+        String s2 = "https://zj.122.gov.cn/user/m/tsc/vio/querySurveilVeh";
+        String usbkey = "https://zj.122.gov.cn/user/m/rentveh/querySurveilList";
         final String[] result = {""};
         final String[] param = {""};
         List<String> resultlist = new ArrayList();
@@ -93,7 +103,7 @@ public class Evcard_Ids_Page{
                                 }
                             }
                         };
-                        Thread.sleep(3000);
+//                        Thread.sleep(3000);
                     }else {
                        String param2 = String.format("xh=%s&size=10",xh.get("xh"));
                         result[0] = HttpClient.toString(HttpClient.postform(s2, param2,a,b,d));
@@ -103,7 +113,7 @@ public class Evcard_Ids_Page{
                                 resultlist.add(result[0]);
                             }
                         }
-                        Thread.sleep(3000);
+//                        Thread.sleep(3000);
                     }
                     }
             }
@@ -143,6 +153,31 @@ public class Evcard_Ids_Page{
             e.printStackTrace();
 
         }
+    }
+
+    public String test4(String telephone) throws IOException {
+        ThreadLocal<String> result = new ThreadLocal<>();
+        ThreadLocal<String> result2 = new ThreadLocal<>();
+        ThreadLocal<List<String>> token = new ThreadLocal<>();
+        try {
+            String s = "http://sgm-test.evcard.vip/sgm-mas/api/login";
+            String parm = String.format("{\"password\":\"123456\",\"appType\":0,\"loginName\":\"%s\",\"imei\":\"afdd7455-8f78-39f3-b2e4-8081736f5e1d\",\"memberType\":0,\"channelId\":\"13065ffa4e1a6968f78\"}",telephone);
+            System.out.println(Thread.currentThread()+"线程"+"执行登录接口");
+            result.set(HttpClient.toString(HttpClient.postJson(s, parm,"")));
+            System.out.println(result.get());
+            Assert.assertEquals("登录成功",JsonPath.read(result.get(),"$.message"));
+            token.set(JsonPath.read(result.get(),"$.resultData..token"));
+            String s2 = "http://sgm-test.evcard.vip/sgm-mas/api/v2/getUserInfo";
+            System.out.println(Thread.currentThread()+"线程"+"执行getUserInfo接口");
+            result2.set(HttpClient.toString(HttpClient.get(s2,token.get().get(0))));
+            Assert.assertEquals("查询成功",JsonPath.read(result2.get(),"$.message"));
+            System.out.println(result2.get());
+            System.out.println("执行完毕");
+        }catch (Exception e){
+            System.out.println(e);
+        }
+
+        return result.get();
     }
 
 //    public void test3(String url) throws IOException {

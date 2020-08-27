@@ -143,13 +143,14 @@ public class HttpClient {
 	 * @throws ClientProtocolException
 	 * @throws IOException
 	 */
-	public static CloseableHttpResponse get(String url) throws ClientProtocolException, IOException {
-		return get(url, true);
+	public static CloseableHttpResponse get(String url,String token) throws ClientProtocolException, IOException {
+		return get(url, true,token);
 	}
 
-	public static CloseableHttpResponse get(String url, boolean withRedirect) throws ClientProtocolException, IOException {
+	public static CloseableHttpResponse get(String url, boolean withRedirect,String token) throws ClientProtocolException, IOException {
 		HttpGet httpget = new HttpGet(url);
-//		httpget.addHeader("token",token);
+		httpget.addHeader("token",token);
+		httpget.addHeader("appType", "0");
 		CloseableHttpResponse response;
 		if (withRedirect) {
 			response = httpClient.execute(httpget, context);
@@ -339,7 +340,8 @@ public class HttpClient {
 		HttpPost httpPost = new HttpPost(url);
 //\\		String encoderJson = URLEncoder.encode(parameters, "UTF-8");
 		httpPost.addHeader(HTTP.CONTENT_TYPE, "application/json");
-		httpPost.addHeader("token",token);
+		httpPost.addHeader("appType", String.valueOf(0));
+		//httpPost.addHeader("token",token);
 		//添加凭证
 		/*if(Authorization.auth!=null){
 			httpPost.addHeader(HttpHeaders.AUTHORIZATION,Authorization.auth);
@@ -457,10 +459,10 @@ public class HttpClient {
 		httpPost.setEntity(se);
 		httpPost.addHeader(HTTP.USER_AGENT,"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.132 Safari/537.36");
 		//httpPost.addHeader("Accept","application/json");
-		addCookie("JSESSIONID-L",a,".wux.122.gov.cn","/");
-		addCookie("acw_tc",b,".wux.122.gov.cn","/");
+		addCookie("JSESSIONID-L",a,".zj.122.gov.cn","/");
+		//addCookie("acw_tc",b,".hb.122.gov.cn","/");
 		//addCookie("__jsluid_s",c,".sh.122.gov.cn","/");
-		addCookie("accessToken",d,".wux.122.gov.cn","/");
+		addCookie("accessToken",d,".zj.122.gov.cn","/");
 		context.setCookieStore(cookieStore);
 		CloseableHttpResponse response = httpClient.execute(httpPost, context);
 		return response;

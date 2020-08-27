@@ -14,6 +14,7 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.testng.AssertJUnit.assertTrue;
 
@@ -57,9 +58,22 @@ public class Evcard_Ids_Assert {
     public List<HashMap> asserttest2(HashMap xh,String a,String b,String d,String startdate,String enddate) throws Exception {
         List<String> result = evcard_mas_page.test2(xh,a,b,d,startdate,enddate);
         List<HashMap> authorslist = new ArrayList<>();
+        final HashMap[] hashMap = {new HashMap()};
         //List<String> authors = JsonPath.read(result, "$.data.content[?(@.clbjStr == '未处理')]['wfms','hphm','wfdz','wfsj','hpzlStr','clbjStr','jkbjStr']");
        for(int i =0 ;i<result.size();i++){
-           List<HashMap> authors = JsonPath.read(result.get(i), "$.data.content[*]['wfms','fkje','wfjfs','hphm','wfdz','wfsj','clbjStr','jkbjStr','hpzlStr']");
+           List<HashMap> authors = JsonPath.read(result.get(i), "$.data.content[*]['wfms','fkje','wfjfs','hphm','wfdz','wfsj','clbjStr','jkbjStr','hpzlStr','cjjg','xh','hpzl']");
+           List<HashMap> authors2 = authors.stream().filter(info -> info.get("wfms") == null).collect(Collectors.toList());
+           if (authors2.size()>0){
+               authors.removeAll(authors2);
+               authors2.forEach(e -> {
+                   try {
+                       hashMap[0] = test5(String.valueOf(e.get("hphm")),String.valueOf(e.get("hpzl")),String.valueOf(e.get("xh")),String.valueOf(e.get("cjjg")),a,b,d);
+                       authors.add(hashMap[0]);
+                   } catch (Exception exception) {
+                       exception.printStackTrace();
+                   }
+               });
+           }
            authorslist.addAll(authors);
        }
         return authorslist;
@@ -89,4 +103,12 @@ public class Evcard_Ids_Assert {
             e.printStackTrace();
         }
     }
+
+    public HashMap test5(String hphm,String hpzl,String xh,String cjjg,String JSESSIONID,String acw_tc,String accessToken) throws Exception {
+        System.out.println("该车辆违法行为为空，进入二级页面查询");
+        String result = evcard_mas_page.test5(hphm,hpzl,xh,cjjg,JSESSIONID,acw_tc,accessToken);
+        HashMap authors = JsonPath.read(result,"$.data['wfms','fkje','wfjfs','hphm','wfdz','wfsj','clbjStr','jkbjStr','hpzlStr']");
+        return authors;
+    }
+
 }
