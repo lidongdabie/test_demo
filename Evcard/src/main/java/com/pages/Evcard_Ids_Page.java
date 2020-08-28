@@ -1,5 +1,6 @@
 package com.pages;
 
+import com.csvreader.CsvReader;
 import com.http.HttpClient;
 import com.jayway.jsonpath.JsonPath;
 import lombok.SneakyThrows;
@@ -7,10 +8,13 @@ import org.testng.Assert;
 import org.testng.internal.thread.ThreadTimeoutException;
 
 import java.io.*;
+import java.nio.charset.Charset;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
+
+import static com.main.main.csvpath_carNo2;
 
 
 /**
@@ -25,22 +29,23 @@ public class Evcard_Ids_Page{
 //        return result;
 //    }
 
-    public String test5(String hphm,String hpzl,String xh,String cjjg,String JSESSIONID,String acw_tc,String accessToken) throws Exception {
-        String s = "https://zj.122.gov.cn/user/m/tsc/vio/querySurvielDetail";
+    public String test5(String hphm,String hpzl,String xh,String cjjg,String JSESSIONID,String acw_tc,String accessToken,String host) throws Exception {
+        String s = String.format("https://%s.122.gov.cn/user/m/tsc/vio/querySurvielDetail",host);
         String param = String.format("hphm=%s&hpzl=%s&xh=%s&cjjg=%s",hphm,hpzl,xh,cjjg);
-        String result = HttpClient.toString(HttpClient.postform(s,param,JSESSIONID,acw_tc,accessToken));
+        String result = HttpClient.toString(HttpClient.postform(s,param,JSESSIONID,acw_tc,accessToken,host));
         return result;
     }
 
-    public List<HashMap> test3(String JSESSIONID,String acw_tc,String accessToken,String csvpath) throws Exception {
-        String s = "https://zj.122.gov.cn/user/m/userinfo/vehs";
-        String s2 = "https://zj.122.gov.cn/user/m/tsc/veh/vehlist";
+    public List<HashMap> test3(String JSESSIONID,String acw_tc,String accessToken,String csvpath,String host) throws Exception {
+        String s = String.format("https://%s.122.gov.cn/user/m/userinfo/vehs",host);
+        String s2 = String.format("https://%s.122.gov.cn/user/m/tsc/veh/vehlist",host);
         String param = "page=1&size=100000";
         ExecutorService executor = Executors.newFixedThreadPool(10);
+        List<HashMap> list = new ArrayList<>();
 
         List<HashMap> authors = new ArrayList<>();
-        String result = HttpClient.toString(HttpClient.postform(s,param,JSESSIONID,acw_tc,accessToken));
-        String result3 = HttpClient.toString(HttpClient.postform(s2,param,JSESSIONID,acw_tc,accessToken));
+        String result = HttpClient.toString(HttpClient.postform(s,param,JSESSIONID,acw_tc,accessToken,host));
+        String result3 = HttpClient.toString(HttpClient.postform(s2,param,JSESSIONID,acw_tc,accessToken,host));
         Integer j = JsonPath.read(result, "$.data.totalPages");
         List<HashMap> author_10 = JsonPath.read(result, "$.data.content[*]['hphm','hpzlStr']");
         System.out.println("查询非运营车牌数据第1页");
@@ -53,7 +58,7 @@ public class Evcard_Ids_Page{
                 @Override
                 public void run() {
                     String param2 = String.format("page=%s&size=100", finalI);
-                    String result2 = HttpClient.toString(HttpClient.postform(s,param2,JSESSIONID,acw_tc,accessToken));
+                    String result2 = HttpClient.toString(HttpClient.postform(s,param2,JSESSIONID,acw_tc,accessToken,host));
                     List<HashMap> author = JsonPath.read(result2, "$.data.content[*]['hphm','hpzlStr']");
                     System.out.println("查询非运营车牌数据第"+ finalI +"页");
                     authors.addAll(author);
@@ -73,13 +78,32 @@ public class Evcard_Ids_Page{
         List<HashMap> author_3=JsonPath.read(result3, "$.data.content[*]['xh','hphm','hpzlStr']");
         authors.addAll(author_3);
         System.out.println("查询完毕,一共"+authors.size()+"辆车");
+
+        if(1==1){
+            System.out.println("开始执行断点续传");
+            String readerCsvFilePath = csvpath_carNo2;
+            CsvReader csvReader = new CsvReader(readerCsvFilePath, ',', Charset.forName("UTF-8"));
+            csvReader.readHeaders(); // 跳过表头   如果需要表头的话，不要写这句。
+            String[] head = csvReader.getHeaders(); //获取表头
+            while (csvReader.readRecord())
+            {
+                HashMap map = new HashMap();
+                map.put("hphm",csvReader.get(head[0]));
+                map.put("hpzlStr",csvReader.get(head[1]));
+
+              list.add(map);
+            }
+            csvReader.close();
+        }
+        System.out.println("已爬取"+list.size()+"辆车."+"还剩下"+(authors.size()-list.size())+"辆车");
+        authors.removeAll(list);
         return authors;
     }
 
-    public List<String> test2(HashMap xh,String a,String b,String d,String startdate,String enddate) throws Exception {
-        String s = "https://zj.122.gov.cn/user/m/uservio/suriquery";
-        String s2 = "https://zj.122.gov.cn/user/m/tsc/vio/querySurveilVeh";
-        String usbkey = "https://zj.122.gov.cn/user/m/rentveh/querySurveilList";
+    public List<String> test2(HashMap xh,String a,String b,String d,String startdate,String enddate,String host,String usbkey) throws Exception {
+        String s = String.format("https://%s.122.gov.cn/user/m/uservio/suriquery",host);
+        String s2 = String.format("https://%s.122.gov.cn/user/m/tsc/vio/querySurveilVeh",host);
+        String usbkey_url = String.format("https://%s.122.gov.cn/user/m/rentveh/querySurveilList",host);
         final String[] result = {""};
         final String[] param = {""};
         List<String> resultlist = new ArrayList();
@@ -95,7 +119,7 @@ public class Evcard_Ids_Page{
                             }else {
                                 param[0] = String.format("startDate=%s&endDate=%s&hpzl=02&hphm=%s&page=%s&type=0",startdate,enddate,xh.get("hphm"), j);
                             }
-                            result[0] = HttpClient.toString(HttpClient.postform(s, param[0],a,b,d));
+                            result[0] = HttpClient.toString(HttpClient.postform(s, param[0],a,b,d,host));
                             if(!result[0].isEmpty()){
                                 List<HashMap> authors = JsonPath.read(result[0], "$.data.content[*]['wfms','fkje','wfjfs','hphm','wfdz','wfsj','clbjStr','jkbjStr','hpzlStr']");
                                 if(authors.size()!=0){
@@ -106,7 +130,11 @@ public class Evcard_Ids_Page{
 //                        Thread.sleep(3000);
                     }else {
                        String param2 = String.format("xh=%s&size=10",xh.get("xh"));
-                        result[0] = HttpClient.toString(HttpClient.postform(s2, param2,a,b,d));
+                       if(usbkey.contains("0")){
+                           result[0] = HttpClient.toString(HttpClient.postform(s2, param2,a,b,d,host));
+                       }else {
+                           result[0] = HttpClient.toString(HttpClient.postform(usbkey_url, param2,a,b,d,host));
+                       }
                         if(!result[0].isEmpty()){
                             List<HashMap> authors = JsonPath.read(result[0], "$.data.content[*]['wfms','fkje','wfjfs','hphm','wfdz','wfsj','clbjStr','jkbjStr','hpzlStr']");
                             if(authors.size()!=0){
@@ -126,34 +154,6 @@ public class Evcard_Ids_Page{
         return resultlist;
     }
 
-    public static void contentToTxt(String filePath, String content) {
-        String str = new String(); //原有txt内容
-        String s1 = new String();//内容更新
-        try {
-            File f = new File(filePath);
-            if (f.exists()) {
-                System.out.print("文件存在");
-            } else {
-                System.out.print("文件不存在");
-                f.createNewFile();// 不存在则创建
-            }
-            BufferedReader input = new BufferedReader(new FileReader(f));
-
-            while ((str = input.readLine()) != null) {
-                s1 += str + "\n";
-            }
-            System.out.println(s1);
-            input.close();
-            s1 += content;
-
-            BufferedWriter output = new BufferedWriter(new FileWriter(f));
-            output.write(s1);
-            output.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-
-        }
-    }
 
     public String test4(String telephone) throws IOException {
         ThreadLocal<String> result = new ThreadLocal<>();

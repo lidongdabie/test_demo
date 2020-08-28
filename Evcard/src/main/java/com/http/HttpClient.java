@@ -450,8 +450,9 @@ public class HttpClient {
 	}
 
 	//post json参数的
-	public static CloseableHttpResponse postform(String url, String parameters ,String a,String b,String d)
+	public static CloseableHttpResponse postform(String url, String parameters ,String a,String b,String d,String host)
 			throws Exception {
+		String cookie_host = String.format("%s.122.gov.cn",host);
 		HttpPost httpPost = new HttpPost(url);
 		httpPost.addHeader(HTTP.CONTENT_TYPE, "application/x-www-form-urlencoded");
 		StringEntity se = new StringEntity(parameters, Charset.forName("UTF-8"));
@@ -459,10 +460,10 @@ public class HttpClient {
 		httpPost.setEntity(se);
 		httpPost.addHeader(HTTP.USER_AGENT,"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.132 Safari/537.36");
 		//httpPost.addHeader("Accept","application/json");
-		addCookie("JSESSIONID-L",a,".zj.122.gov.cn","/");
+		addCookie("JSESSIONID-L",a,cookie_host,"/");
 		//addCookie("acw_tc",b,".zj.122.gov.cn","/");
 		//addCookie("__jsluid_s",c,".sh.122.gov.cn","/");
-		addCookie("accessToken",d,".zj.122.gov.cn","/");
+		addCookie("accessToken",d,cookie_host,"/");
 		context.setCookieStore(cookieStore);
 		CloseableHttpResponse response = httpClient.execute(httpPost, context);
 		return response;

@@ -27,14 +27,14 @@ public class Evcard_Ids_Assert {
     Evcard_Ids_Page evcard_mas_page = new Evcard_Ids_Page();
     List<HashMap> authors = null;
 
-    public void asserttest(String JSESSIONID,String acw_tc,String accessToken,String csvpath,String startdate,String enddate,String csvpath_carNo,String csvpath_carNo2) throws Exception {
+    public void asserttest(String JSESSIONID,String acw_tc,String accessToken,String csvpath,String startdate,String enddate,String csvpath_carNo,String csvpath_carNo2,String host,String usbkey) throws Exception {
 //        String result = evcard_mas_page.test(JSESSIONID,acw_tc,accessToken,csvpath);
 //        //List<String> authors = JsonPath.read(result, "$.data.content[?(@.ztStr == '违法未处理')].xh");
 //        authors = JsonPath.read(result, "$.data.content[*].xh");
         authors = new ArrayList<HashMap>();
 
 
-        authors = evcard_mas_page.test3(JSESSIONID,acw_tc,accessToken,csvpath);
+        authors = evcard_mas_page.test3(JSESSIONID,acw_tc,accessToken,csvpath,host);
 
 
         String filePath = csvpath;
@@ -44,7 +44,6 @@ public class Evcard_Ids_Assert {
         System.out.println(filePath_carNo);
         CsvWriter csvWriter = new CsvWriter(filePath,',', Charset.forName("UTF-8"));
         CsvWriter csvWriter_carNo = new CsvWriter(filePath_carNo,',', Charset.forName("UTF-8"));
-        CsvWriter csvWriter_carNo2 = new CsvWriter(filePath_carNo2,',', Charset.forName("UTF-8"));
 
 
         // 写表头
@@ -54,7 +53,6 @@ public class Evcard_Ids_Assert {
 
         csvWriter.writeRecord(headers);
         csvWriter_carNo.writeRecord(headers2);
-        csvWriter_carNo2.writeRecord(headers);
         //写入车牌号数据
         System.out.println("写入车牌号数据");
         for (int i = 0;i<authors.size();i++){
@@ -62,9 +60,12 @@ public class Evcard_Ids_Assert {
         }
         System.out.println("写入完毕");
 
+        CsvWriter csvWriter_carNo2 = new CsvWriter(filePath_carNo2,',', Charset.forName("UTF-8"));
+        csvWriter_carNo2.writeRecord(headers2);
+
         for (int i = 0;i<authors.size();i++){
             System.out.println("开始执行:"+authors.get(i)+"---第"+(i+1)+"条数据---");
-            List<HashMap> li = asserttest2(authors.get(i),JSESSIONID,acw_tc,accessToken,startdate,enddate);
+            List<HashMap> li = asserttest2(authors.get(i),JSESSIONID,acw_tc,accessToken,startdate,enddate,host,usbkey);
             test3(li,csvWriter);
             test7(authors.get(i),csvWriter_carNo2);
             csvWriter.flush();
@@ -78,8 +79,8 @@ public class Evcard_Ids_Assert {
         csvWriter_carNo2.close();
     }
 
-    public List<HashMap> asserttest2(HashMap xh,String a,String b,String d,String startdate,String enddate) throws Exception {
-        List<String> result = evcard_mas_page.test2(xh,a,b,d,startdate,enddate);
+    public List<HashMap> asserttest2(HashMap xh,String a,String b,String d,String startdate,String enddate,String host,String usbkey) throws Exception {
+        List<String> result = evcard_mas_page.test2(xh,a,b,d,startdate,enddate,host,usbkey);
         List<HashMap> authorslist = new ArrayList<>();
         final HashMap[] hashMap = {new HashMap()};
         //List<String> authors = JsonPath.read(result, "$.data.content[?(@.clbjStr == '未处理')]['wfms','hphm','wfdz','wfsj','hpzlStr','clbjStr','jkbjStr']");
@@ -91,7 +92,7 @@ public class Evcard_Ids_Assert {
                authors.removeAll(authors2);
                authors2.forEach(e -> {
                    try {
-                       hashMap[0] = test5(String.valueOf(e.get("hphm")),String.valueOf(e.get("hpzl")),String.valueOf(e.get("xh")),String.valueOf(e.get("cjjg")),a,b,d);
+                       hashMap[0] = test5(String.valueOf(e.get("hphm")),String.valueOf(e.get("hpzl")),String.valueOf(e.get("xh")),String.valueOf(e.get("cjjg")),a,b,d,host);
                        authors.add(hashMap[0]);
                    } catch (Exception exception) {
                        exception.printStackTrace();
@@ -120,9 +121,9 @@ public class Evcard_Ids_Assert {
         }
     }
 
-    public HashMap test5(String hphm,String hpzl,String xh,String cjjg,String JSESSIONID,String acw_tc,String accessToken) throws Exception {
+    public HashMap test5(String hphm,String hpzl,String xh,String cjjg,String JSESSIONID,String acw_tc,String accessToken,String host) throws Exception {
         System.out.println("该车辆违法行为为空，进入二级页面查询");
-        String result = evcard_mas_page.test5(hphm,hpzl,xh,cjjg,JSESSIONID,acw_tc,accessToken);
+        String result = evcard_mas_page.test5(hphm,hpzl,xh,cjjg,JSESSIONID,acw_tc,accessToken,host);
         HashMap authors = JsonPath.read(result,"$.data['wfms','fkje','wfjfs','hphm','wfdz','wfsj','clbjStr','jkbjStr','hpzlStr']");
         return authors;
     }
