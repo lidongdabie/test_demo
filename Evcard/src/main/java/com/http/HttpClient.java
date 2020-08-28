@@ -460,7 +460,7 @@ public class HttpClient {
 		httpPost.addHeader(HTTP.USER_AGENT,"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.132 Safari/537.36");
 		//httpPost.addHeader("Accept","application/json");
 		addCookie("JSESSIONID-L",a,".zj.122.gov.cn","/");
-		//addCookie("acw_tc",b,".hb.122.gov.cn","/");
+		//addCookie("acw_tc",b,".zj.122.gov.cn","/");
 		//addCookie("__jsluid_s",c,".sh.122.gov.cn","/");
 		addCookie("accessToken",d,".zj.122.gov.cn","/");
 		context.setCookieStore(cookieStore);

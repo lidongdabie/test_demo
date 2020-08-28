@@ -12,19 +12,29 @@ public class main {
 //        String acw_tc = System.getProperty("acw_tc");
 //        String accessToken = System.getProperty("accessToken");
 //        String csvpath = System.getProperty("csvpath");
+//        String csvpath_carNo = System.getProperty("csvpath_carNo");
 //        String startdate = System.getProperty("startdate");
 //        String enddate = System.getProperty("enddate");
 
-        String JSESSIONID = "1112d37e-24cc-4dea-8c28-725da7d9e186";
+
+
+
+
+
+
+
+        String JSESSIONID = "d3201537-04cd-4b94-af13-8b83117dbb0b";
         String acw_tc = "";
         //String jsluid_s = "";
-        String accessToken = "oiGrSlL+niB0xYHRs+MIFR05tUhW8XcBeu84gIqfAIIW6xfe9Aa8C3UZzNumVqqC4H8ctKed+Eb1WQQE8i994wpkTeztvqEyzpflOtS4FaSoQDhRWvhSZIvAUAa2FX2DyTp9xR3bF+hzf5Zv9ZDR3Fm3VvEh3nQvMPANh+lr6zrMKkno7yOUS73jnIyCSImn";
+        String accessToken = "R1a6/UGytzXaY8MT2qhEwdup+ulnTuO0wfUNozrtWzOy+ZB0ekE2ojPatqCoNAcXZzxQ9ATx809iqulV7e/mJx/vl+6VDwJ5GFRNR54nGyJFmtlUrosgJZlmfufuJOBwZ12vuovXjJHUVztL7qHlu0V8B6nld0KhFN4C3iiAYUy2f4LKJGh9c8cZOusnWFRL";
         String csvpath = "/Users/weijin/Downloads/IDS_APIAutomation_OLD/Evcard/test.csv";
+        String csvpath_carNo = "/Users/weijin/Downloads/IDS_APIAutomation_OLD/Evcard/test2.csv";
+        String csvpath_carNo2 = "/Users/weijin/Downloads/IDS_APIAutomation_OLD/Evcard/test3.csv";
         String startdate ="20170101";
         String enddate ="20200818";
         System.out.println(csvpath);
         Evcard_Ids_Assert evcard_ids_assert = new Evcard_Ids_Assert();
-        evcard_ids_assert.asserttest(JSESSIONID,acw_tc,accessToken,csvpath,startdate,enddate);
+        evcard_ids_assert.asserttest(JSESSIONID,acw_tc,accessToken,csvpath,startdate,enddate,csvpath_carNo,csvpath_carNo2);
 //
 //        ExecutorService executor = Executors.newFixedThreadPool(10);
 //

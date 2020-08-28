@@ -18,12 +18,12 @@ import java.util.stream.Collectors;
  */
 public class Evcard_Ids_Page{
 
-    public String test(String JSESSIONID,String acw_tc,String accessToken,String csvpath) throws Exception {
-        String s = "https://hn.122.gov.cn/user/m/userinfo/vehs";
-        String param = "page=1&size=5080";
-        String result = HttpClient.toString(HttpClient.postform(s,param,JSESSIONID,acw_tc,accessToken));
-        return result;
-    }
+//    public String test(String JSESSIONID,String acw_tc,String accessToken,String csvpath) throws Exception {
+//        String s = "https://fj.122.gov.cn/user/m/userinfo/vehs";
+//        String param = "page=1&size=5080";
+//        String result = HttpClient.toString(HttpClient.postform(s,param,JSESSIONID,acw_tc,accessToken));
+//        return result;
+//    }
 
     public String test5(String hphm,String hpzl,String xh,String cjjg,String JSESSIONID,String acw_tc,String accessToken) throws Exception {
         String s = "https://zj.122.gov.cn/user/m/tsc/vio/querySurvielDetail";
