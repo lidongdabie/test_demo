@@ -35,8 +35,8 @@ public class main {
         final String[] JSESSIONID = {null};
         String acw_tc = null;
         final String[] accessToken = {null};
-        List<String> a = Arrays.stream(Cookie.split(";")).filter(e->e.contains("JSESSIONID")||e.contains("accessToken")).collect(Collectors.toList());
-        a.forEach(e->{
+        List<String> tokenlist = Arrays.stream(Cookie.split(";")).filter(e->e.contains("JSESSIONID")||e.contains("accessToken")).collect(Collectors.toList());
+        tokenlist.forEach(e->{
             if(e.split("=")[0].equals(" JSESSIONID-L")){
                 JSESSIONID[0] = e.split("=")[1];
             } if(e.split("=")[0].equals(" accessToken")){
