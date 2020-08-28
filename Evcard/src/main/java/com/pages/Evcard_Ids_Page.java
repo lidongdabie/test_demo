@@ -14,7 +14,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
-import static com.main.main.csvpath_carNo2;
+import static com.main.main.*;
 
 
 /**
@@ -74,12 +74,14 @@ public class Evcard_Ids_Page{
             }
         }
 
-        System.out.println("查询运营车辆");
-        List<HashMap> author_3=JsonPath.read(result3, "$.data.content[*]['xh','hphm','hpzlStr']");
-        authors.addAll(author_3);
+        if(business.equals("1")){
+            System.out.println("查询运营车辆");
+            List<HashMap> author_3=JsonPath.read(result3, "$.data.content[*]['xh','hphm','hpzlStr']");
+            authors.addAll(author_3);
+        }
         System.out.println("查询完毕,一共"+authors.size()+"辆车");
 
-        if(1==1){
+        if(download.equals("1")){
             System.out.println("开始执行断点续传");
             String readerCsvFilePath = csvpath_carNo2;
             CsvReader csvReader = new CsvReader(readerCsvFilePath, ',', Charset.forName("UTF-8"));

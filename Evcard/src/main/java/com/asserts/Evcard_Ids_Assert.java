@@ -58,21 +58,27 @@ public class Evcard_Ids_Assert {
         for (int i = 0;i<authors.size();i++){
             test6(authors.get(i),csvWriter_carNo);
         }
+
         System.out.println("写入完毕");
 
         CsvWriter csvWriter_carNo2 = new CsvWriter(filePath_carNo2,',', Charset.forName("UTF-8"));
         csvWriter_carNo2.writeRecord(headers2);
-
-        for (int i = 0;i<authors.size();i++){
-            System.out.println("开始执行:"+authors.get(i)+"---第"+(i+1)+"条数据---");
-            List<HashMap> li = asserttest2(authors.get(i),JSESSIONID,acw_tc,accessToken,startdate,enddate,host,usbkey);
-            test3(li,csvWriter);
-            test7(authors.get(i),csvWriter_carNo2);
-            csvWriter.flush();
-            csvWriter_carNo.flush();
-            csvWriter_carNo2.flush();
-            System.out.println("写入完毕");
+        try{
+            for (int i = 0;i<authors.size();i++){
+                System.out.println("开始执行:"+authors.get(i)+"---第"+(i+1)+"条数据---");
+                List<HashMap> li = asserttest2(authors.get(i),JSESSIONID,acw_tc,accessToken,startdate,enddate,host,usbkey);
+                test3(li,csvWriter);
+                test7(authors.get(i),csvWriter_carNo2);
+                csvWriter.flush();
+                csvWriter_carNo.flush();
+                csvWriter_carNo2.flush();
+                System.out.println("写入完毕");
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            csvWriter_carNo2.close();
         }
+
         System.out.println("--------CSV文件已经写入--------");
         csvWriter.close();
         csvWriter_carNo.close();
@@ -96,7 +102,6 @@ public class Evcard_Ids_Assert {
                        authors.add(hashMap[0]);
                    } catch (Exception exception) {
                        exception.printStackTrace();
-
                    }
                });
            }
