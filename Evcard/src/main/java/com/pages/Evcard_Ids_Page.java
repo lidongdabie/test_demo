@@ -36,7 +36,7 @@ public class Evcard_Ids_Page{
         return result;
     }
 
-    public List<HashMap> test3(String JSESSIONID,String acw_tc,String accessToken,String csvpath,String host) throws Exception {
+    public List<HashMap> test3(String JSESSIONID,String acw_tc,String accessToken,String host) throws Exception {
         String s = String.format("https://%s.122.gov.cn/user/m/userinfo/vehs",host);
         String s2 = String.format("https://%s.122.gov.cn/user/m/tsc/veh/vehlist",host);
         String param = "page=1&size=100000";

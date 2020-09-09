@@ -12,7 +12,9 @@ import org.testng.annotations.Test;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -26,7 +28,7 @@ public class Evcard_Ids_testcase extends AutoDataDriverBase {
     Evcard_Ids_Page evcard_ids_page = new Evcard_Ids_Page();
 
 
-    @Test(invocationCount = 100)
+    @Test(dataProvider="CsvDataProvider")
     public void testaddNewTask() throws IOException {
         List<String> list = new ArrayList<>();
         list.add("11122233300");
@@ -739,4 +741,18 @@ public class Evcard_Ids_testcase extends AutoDataDriverBase {
     }
 
 
+    @Test
+    public void test33(){
+        List<Integer> list = new CopyOnWriteArrayList<>();
+        for (int i = 0 ;i < 1000 ; i++){
+            list.add(i);
+        }
+        Iterator<Integer> itr = list.iterator();
+        while (itr.hasNext()){
+            Integer i = itr.next();
+            list.remove(i);
+
+        }
+        System.out.println(list);
+    }
 }
