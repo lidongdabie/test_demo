@@ -39,13 +39,19 @@ public class Evcard_Ids_Page{
     public List<HashMap> test3(String JSESSIONID,String acw_tc,String accessToken,String host) throws Exception {
         String s = String.format("https://%s.122.gov.cn/user/m/userinfo/vehs",host);
         String s2 = String.format("https://%s.122.gov.cn/user/m/tsc/veh/vehlist",host);
+        String s2_usbkey = String.format("https://%s.122.gov.cn/user/m/rentveh/vehlist",host);
         String param = "page=1&size=100000";
         ExecutorService executor = Executors.newFixedThreadPool(10);
         List<HashMap> list = new ArrayList<>();
+        String result3 = null;
 
         List<HashMap> authors = new ArrayList<>();
         String result = HttpClient.toString(HttpClient.postform(s,param,JSESSIONID,acw_tc,accessToken,host));
-        String result3 = HttpClient.toString(HttpClient.postform(s2,param,JSESSIONID,acw_tc,accessToken,host));
+        if(usbkey.contains("0")){
+             result3 = HttpClient.toString(HttpClient.postform(s2,param,JSESSIONID,acw_tc,accessToken,host));
+        } else {
+             result3 = HttpClient.toString(HttpClient.postform(s2_usbkey,param,JSESSIONID,acw_tc,accessToken,host));
+        }
         Integer j = JsonPath.read(result, "$.data.totalPages");
         List<HashMap> author_10 = JsonPath.read(result, "$.data.content[*]['hphm','hpzlStr']");
         System.out.println("查询非运营车牌数据第1页");
